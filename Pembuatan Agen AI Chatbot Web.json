@@ -1,0 +1,162 @@
+{
+  "name": "Pembuatan Agen AI Chatbot Web",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! Saya asisten produk pelatihan. Ada yang bisa saya bantu?",
+        "options": {
+          "title": "Chatbot Produk Pelatihan"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "43896ea0-48f0-426b-9f12-d5eb8e8be2b6",
+      "name": "When chat message received",
+      "webhookId": "9f115e63-a5f9-435c-8465-d5fb64e61f91"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah asisten virtual customer service untuk penyedia produk pelatihan. Tugasmu adalah menjawab pertanyaan pelanggan tentang produk pelatihan dan harganya.\n\nATURAN:\n1. Selalu gunakan tool \"Get row(s) in sheet in Google Sheets\" untuk mengambil data produk dan harga terbaru sebelum menjawab pertanyaan tentang produk, harga, durasi, atau deskripsi.\n2. Jawab HANYA berdasarkan data dari tool. Jangan mengarang produk atau harga.\n3. Jika produk yang ditanyakan tidak ada di data, katakan dengan sopan bahwa produk tersebut belum tersedia, lalu tawarkan produk lain yang mirip.\n4. Tampilkan harga dalam format Rupiah, contoh: Rp1.500.000.\n5. Gunakan bahasa Indonesia yang ramah, singkat, dan jelas.\n6. Jika pertanyaan di luar topik produk pelatihan, arahkan kembali dengan sopan ke topik produk dan harga."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c2b780f2-4776-4ffb-80be-cfff006f5434",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        112,
+        256
+      ],
+      "id": "f4b775c4-5a23-465d-a435-f0dd820b5bb5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "VXurF5DMkfYj0FeD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        320,
+        256
+      ],
+      "id": "43dcc1c4-9d3e-4047-9cdb-ea751d10fedb",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1oW3Es-CYu9IlYzPzNPEnUpaSmVKKhzAuz2NsoMZEO9E",
+          "mode": "list",
+          "cachedResultName": "Pembuatan Agen AI Chatbot Web dengan Tool Data di Google Sheets",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oW3Es-CYu9IlYzPzNPEnUpaSmVKKhzAuz2NsoMZEO9E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oW3Es-CYu9IlYzPzNPEnUpaSmVKKhzAuz2NsoMZEO9E/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        544,
+        256
+      ],
+      "id": "9974860a-b950-48d9-8e82-cfdb31ffb928",
+      "name": "Get row(s) in sheet in Google Sheets1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YEp1B3vh4MDZcYXh",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0434e8ea-b762-401f-8947-3c29cbb0ca95",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "pJwS5jx3ZsQJfLDy",
+  "tags": []
+}
